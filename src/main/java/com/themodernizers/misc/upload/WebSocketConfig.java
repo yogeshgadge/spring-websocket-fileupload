@@ -3,6 +3,7 @@ package com.themodernizers.misc.upload;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.socket.config.annotation.*;
 import org.springframework.web.socket.server.standard.ServerEndpointExporter;
@@ -25,6 +26,12 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer im
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
+        registry.addEndpoint("/stomp").setAllowedOrigins("*");
+    }
 
+    @Override
+    public void configureMessageBroker(MessageBrokerRegistry config) {
+        config.enableSimpleBroker("/topic");
+        config.setApplicationDestinationPrefixes("/stomp");
     }
 }

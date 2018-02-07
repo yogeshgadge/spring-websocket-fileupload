@@ -5,18 +5,27 @@
     <title>Title</title>
 </head>
 <body>
-
+<h1>Demo</h1>
+<h3>Plain text WS</h3>
 <button onClick="textWS.connect()">Connect</button>
 <button onClick="textWS.disconnect()">Disconnect</button>
 <button onClick="textWS.sendMessage()">Send Text random</button>
 <br>
+<h3>Upload Via binaryWS (ends up as chunked in server side</h3>
 <hr>
 <button onClick="binaryWS.connect()">Connect</button>
 <button onClick="binaryWS.disconnect()">Disconnect</button>
 <input id="upload" type="file" onchange="binaryWS.uploadFile(this.files)"/>
 <label for="upload">Select a file</label>
 
+<br>
+<h3>Upload Via Fetch</h3>
+<hr>
+<input id="upload-via-fetch" type="file" onchange="fetchClient.uploadFile(this.files)"/>
+<label for="upload-via-fetch">Select a file</label>
+
 <script src="./app.js"></script>
 <script src="./upload.js"></script>
+<script src="./fetchUpload.js"></script>
 </body>
 </html>
