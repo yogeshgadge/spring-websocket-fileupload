@@ -1,28 +1,48 @@
-function connect() {
-    ws = new WebSocket('ws://'+window.location.host+'/name');
-    ws.onmessage = function(data){
-        showGreeting(data.data);
-    }
-    setConnected(true);
+
+
+
+// --------------------------
+
+function TextWSClient(url) {
+    this.url = url;
 }
 
-function disconnect() {
-    if (ws != null) {
-        ws.close();
+TextWSClient.prototype.connect = function() {
+    var ws = new WebSocket(this.url);
+    this.ws = ws;
+    ws.onmessage = this.onMessageFn;
+
+    this.setConnected(true);
+};
+TextWSClient.prototype.setOnMessage = function(onMessageFn) {
+  this.onMessageFn =   onMessageFn;
+};
+
+TextWSClient.prototype.disconnect = function() {
+    if (this.ws != null) {
+        this.ws.close();
     }
-    setConnected(false);
+    this.setConnected(false);
     console.log("Disconnected");
-}
+};
 
-function setConnected(connected) {
+TextWSClient.prototype.setConnected = function(connected) {
     console.log(connected);
-}
-function sendMessage() {
+};
+TextWSClient.prototype.sendMessage = function() {
     var message = 'Browser message' + Math.random() * 1000;
     console.log('Sending '+message);
-    ws.send(message);
+    this.ws.send(message);
+};
+
+function showGreetings(data) {
+    console.log(data.data + "");
+};
+
+function uploadFile(files) {
+ console.log(files);
+  this.ws.send( files[0]);
 }
 
-function showGreeting(message) {
-    console.log(message + "");
-}
+window.textWS = new TextWSClient('ws://'+window.location.host+'/text');
+window.textWS.setOnMessage(showGreetings);

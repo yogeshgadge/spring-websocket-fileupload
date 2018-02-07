@@ -31,6 +31,8 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.springframework.boot:spring-boot-starter-websocket')
 	compile('com.google.code.gson:gson')
+	compile('javax.websocket:javax.websocket-api:1.1')
+	compile("org.springframework.boot:spring-boot-devtools")
 	providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }

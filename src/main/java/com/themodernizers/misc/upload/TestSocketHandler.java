@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class SocketHandler  extends TextWebSocketHandler {
+public class TestSocketHandler extends TextWebSocketHandler {
 
     List<WebSocketSession> sessions = new CopyOnWriteArrayList();
 

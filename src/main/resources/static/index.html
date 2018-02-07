@@ -6,11 +6,17 @@
 </head>
 <body>
 
-<button onClick="connect()">Connect</button>
-<button onClick="disconnect()">Disconnect</button>
-<button onClick="sendMessage()">Send random</button>
-
+<button onClick="textWS.connect()">Connect</button>
+<button onClick="textWS.disconnect()">Disconnect</button>
+<button onClick="textWS.sendMessage()">Send Text random</button>
+<br>
+<hr>
+<button onClick="binaryWS.connect()">Connect</button>
+<button onClick="binaryWS.disconnect()">Disconnect</button>
+<input id="upload" type="file" onchange="binaryWS.uploadFile(this.files)"/>
+<label for="upload">Select a file</label>
 
 <script src="./app.js"></script>
+<script src="./upload.js"></script>
 </body>
 </html>
