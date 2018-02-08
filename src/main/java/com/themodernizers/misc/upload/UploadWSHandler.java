@@ -1,9 +1,10 @@
 package com.themodernizers.misc.upload;
 
 import com.google.common.base.Splitter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.socket.BinaryMessage;
-import org.springframework.web.socket.PongMessage;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.BinaryWebSocketHandler;
@@ -22,6 +23,8 @@ import java.util.WeakHashMap;
 
 public class UploadWSHandler extends BinaryWebSocketHandler {
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     Map<WebSocketSession, FileUploadInFlight> sessionToFileMap = new WeakHashMap<>();
 
     @Override
@@ -31,6 +34,7 @@ public class UploadWSHandler extends BinaryWebSocketHandler {
 
     @Override
     protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) throws Exception {
+
         ByteBuffer payload = message.getPayload();
         FileUploadInFlight inflightUpload = sessionToFileMap.get(session);
         if (inflightUpload == null) {
@@ -48,9 +52,10 @@ public class UploadWSHandler extends BinaryWebSocketHandler {
             session.sendMessage(new TextMessage("UPLOAD "+inflightUpload.name));
             session.close();
             sessionToFileMap.remove(session);
+            logger.info("Uploaded "+inflightUpload.name);
         }
         String response = "Upload Chunk: size "+ payload.array().length;
-        System.out.println(response);
+        logger.debug(response);
 
     }
 
@@ -62,6 +67,7 @@ public class UploadWSHandler extends BinaryWebSocketHandler {
 
 
     static class FileUploadInFlight {
+        private final Logger logger = LoggerFactory.getLogger(this.getClass());
         String name;
         String uniqueUploadId;
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -73,12 +79,13 @@ public class UploadWSHandler extends BinaryWebSocketHandler {
             String query = session.getUri().getQuery();
             String uploadSessionIdBase64 = query.split("=")[1];
             String uploadSessionId = new String(Base64Utils.decodeUrlSafe(uploadSessionIdBase64.getBytes()));
-            System.out.println(uploadSessionId);
+
             List<String> sessionIdentifiers = Splitter.on("\\").splitToList(uploadSessionId);
             String uniqueUploadId = session.getRemoteAddress().toString()+sessionIdentifiers.get(0);
             String fileName = sessionIdentifiers.get(1);
             this.name = fileName;
             this.uniqueUploadId = uniqueUploadId;
+            logger.info("Preparing upload for "+this.name+" uploadSessionId "+uploadSessionId);
         }
         public void append(ByteBuffer byteBuffer) throws IOException{
             bos.write(byteBuffer.array());

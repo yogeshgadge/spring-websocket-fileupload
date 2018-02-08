@@ -1,5 +1,7 @@
 package com.themodernizers.misc.upload;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -21,11 +23,12 @@ import java.util.UUID;
 @Controller
 public class UploadControllerSTOMPAndFetch {
 
-
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    
     @MessageMapping("/upload")
     public String upload(@RequestBody byte[] data, @RequestHeader("X-File-Name") String fileName) throws Exception {
-        System.out.println("/upload "+fileName);
-        System.out.println(data);
+        logger.info("/upload "+fileName);
+        logger.info(data.toString());
         return "ACK";
     }
 
@@ -33,7 +36,7 @@ public class UploadControllerSTOMPAndFetch {
     @ResponseBody
     public ResponseEntity<String> handleFileUploadMultipart(@RequestParam("file") MultipartFile file) {
 
-        System.out.println(file);
+        logger.info(file.toString());
 
         return ResponseEntity.ok().header(
                 HttpHeaders.CONTENT_DISPOSITION,
@@ -53,7 +56,7 @@ public class UploadControllerSTOMPAndFetch {
         channel.write(ByteBuffer.wrap(data));
         channel.close();
 
-        System.out.println("received "+fileName);
+        logger.info("received "+fileName);
         return ResponseEntity.ok().header(
                 HttpHeaders.CONTENT_DISPOSITION,
                 "attachment; filename=\"" + fileName + "\"").body("{success: true, uploaded: "+fileName+"}");
@@ -62,7 +65,7 @@ public class UploadControllerSTOMPAndFetch {
     @GetMapping("/multipart/ping")
     @ResponseBody
     public ResponseEntity<String> ping() {
-        System.out.println("pinged");
+        logger.info("pinged");
         return ResponseEntity.ok().body(String.format("{pinged: %s", Calendar.getInstance().toString()));
     }
 }
