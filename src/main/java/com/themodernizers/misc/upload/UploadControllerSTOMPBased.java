@@ -21,8 +21,9 @@ public class UploadControllerSTOMPBased {
 
 
     @MessageMapping("/upload")
-    public String upload(Object o) throws Exception {
-        System.out.println(o);
+    public String upload(@RequestBody byte[] data, @RequestHeader("X-File-Name") String fileName) throws Exception {
+        System.out.println("/upload "+fileName);
+        System.out.println(data);
         return "ACK";
     }
 

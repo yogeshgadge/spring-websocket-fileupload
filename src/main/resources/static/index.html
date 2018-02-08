@@ -13,9 +13,7 @@
 <br>
 <h3>Upload Via binaryWS (ends up as chunked in server side</h3>
 <hr>
-<button onClick="binaryWS.connect()">Connect</button>
-<button onClick="binaryWS.disconnect()">Disconnect</button>
-<input id="upload" type="file" onchange="binaryWS.uploadFile(this.files)"/>
+<input id="upload" type="file" onchange="uploadFileBinaryWS(this.files)"/>
 <label for="upload">Select a file</label>
 
 <br>
@@ -25,7 +23,9 @@
 <label for="upload-via-fetch">Select a file</label>
 
 <script src="./app.js"></script>
-<script src="./upload.js"></script>
-<script src="./fetchUpload.js"></script>
+<script src="./BinaryWSClient.js"></script>
+<script src="TextWSClient.js"></script>
+<script src="FetchUpload.js"></script>
+
 </body>
 </html>
