@@ -9,16 +9,11 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.BinaryWebSocketHandler;
 
-
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.WeakHashMap;
 
 public class UploadWSHandler extends BinaryWebSocketHandler {
@@ -43,12 +38,8 @@ public class UploadWSHandler extends BinaryWebSocketHandler {
         inflightUpload.append(payload);
 
         if (message.isLast()) {
-            Path basePath = Paths.get(".", "uploads", UUID.randomUUID().toString());
-            Files.createDirectories(basePath);
-            FileChannel channel = new FileOutputStream(
-                    Paths.get(basePath.toString() ,inflightUpload.name).toFile(), false).getChannel();
-            channel.write(ByteBuffer.wrap(inflightUpload.bos.toByteArray()));
-            channel.close();
+            SaveToFileSystem.save(inflightUpload.name, "websocket", inflightUpload.bos.toByteArray());
+
             session.sendMessage(new TextMessage("UPLOAD "+inflightUpload.name));
             session.close();
             sessionToFileMap.remove(session);

@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>PoC Large File Upload -> WS vs fetch vs multipart</title>
 </head>
 <body>
-<h1>Demo</h1>
+<h1>PoC Large File Upload -> WS vs fetch vs multipart</h1>
 <h3>Upload Via binaryWS (ends up as chunked in server side</h3>
 <hr>
 <input id="upload" type="file" onchange="uploadFileBinaryWS(this.files)"/>
@@ -17,13 +17,21 @@
 <input id="upload-via-fetch" type="file" onchange="fetchClient.uploadFile(this.files)"/>
 <label for="upload-via-fetch">Select a file</label>
 
+<br>
+<h3>Upload Multipart XHR</h3>
+<hr>
+<form>
+    <input id="upload-via-multipart" type="file" onchange="multipartClient.uploadFile(this.files)"/>
+    <label for="upload-via-multipart">Select a file</label>
+</form>
+
 <script src="./webjars/org.webjars.npm/es6-promise/4.2.4/dist/es6-promise.min.js"></script>
 <script src="./webjars/org.webjars.npm/es6-promise/4.2.4/dist/es6-promise.auto.min.js"></script>
 <script src="./webjars/whatwg-fetch/2.0.3/fetch.js"></script>
 <script src="./app.js"></script>
 <script src="./BinaryWSClient.js"></script>
-<script src="TextWSClient.js"></script>
-<script src="FetchUpload.js"></script>
+<script src="./FetchUpload.js"></script>
+<script src="./MultipartUpload.js"></script>
 
 </body>
 </html>
