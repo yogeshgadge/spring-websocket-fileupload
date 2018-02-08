@@ -32,6 +32,7 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-websocket')
 	compile('com.google.code.gson:gson')
 	compile('com.google.guava:guava:18.0')
+	compile('org.webjars.npm:whatwg-fetch:2.0.3')
 	compile('javax.websocket:javax.websocket-api:1.1')
 	compile("org.springframework.boot:spring-boot-devtools")
 	providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')

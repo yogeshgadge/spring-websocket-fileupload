@@ -12,12 +12,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Calendar;
+import java.util.UUID;
 
 @Controller
-public class UploadControllerSTOMPBased {
+public class UploadControllerSTOMPAndFetch {
 
 
     @MessageMapping("/upload")
@@ -44,8 +46,10 @@ public class UploadControllerSTOMPBased {
     @ResponseBody
     public ResponseEntity<String> handleFileUploadFetchFileBlob(@RequestBody byte[] data, @RequestHeader("X-File-Name") String fileName) throws IOException{
 
+        Path basePath = Paths.get(".", "uploads", "fetch-based", UUID.randomUUID().toString());
+        Files.createDirectories(basePath);
 
-        FileChannel channel =  new FileOutputStream(Paths.get(".", "uploads", fileName).toFile(), false).getChannel();
+        FileChannel channel =  new FileOutputStream(Paths.get(basePath.toString(), fileName).toFile(), false).getChannel();
         channel.write(ByteBuffer.wrap(data));
         channel.close();
 

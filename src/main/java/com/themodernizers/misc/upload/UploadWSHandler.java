@@ -19,22 +19,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.WeakHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class UploadWSHandler extends BinaryWebSocketHandler {
-
-    List<WebSocketSession> sessions = new CopyOnWriteArrayList();
-
 
     Map<WebSocketSession, FileUploadInFlight> sessionToFileMap = new WeakHashMap<>();
 
     @Override
+    public boolean supportsPartialMessages() {
+        return true;
+    }
+
+    @Override
     protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) throws Exception {
-
         ByteBuffer payload = message.getPayload();
-
         FileUploadInFlight inflightUpload = sessionToFileMap.get(session);
-
         if (inflightUpload == null) {
             throw new IllegalStateException("This is not expected");
         }
@@ -43,7 +41,8 @@ public class UploadWSHandler extends BinaryWebSocketHandler {
         if (message.isLast()) {
             Path basePath = Paths.get(".", "uploads", UUID.randomUUID().toString());
             Files.createDirectories(basePath);
-            FileChannel channel = new FileOutputStream(Paths.get(basePath.toString() ,inflightUpload.name).toFile(), false).getChannel();
+            FileChannel channel = new FileOutputStream(
+                    Paths.get(basePath.toString() ,inflightUpload.name).toFile(), false).getChannel();
             channel.write(ByteBuffer.wrap(inflightUpload.bos.toByteArray()));
             channel.close();
             session.sendMessage(new TextMessage("UPLOAD "+inflightUpload.name));
@@ -57,15 +56,7 @@ public class UploadWSHandler extends BinaryWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        sessions.add(session);
-
-
         sessionToFileMap.put(session, new FileUploadInFlight(session));
-    }
-
-    @Override
-    public boolean supportsPartialMessages() {
-        return true;
     }
 
 
@@ -74,10 +65,12 @@ public class UploadWSHandler extends BinaryWebSocketHandler {
         String name;
         String uniqueUploadId;
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
+        /**
+         * Fragile constructor - beware not prod ready
+         * @param session
+         */
         FileUploadInFlight(WebSocketSession session) {
             String query = session.getUri().getQuery();
-
             String uploadSessionIdBase64 = query.split("=")[1];
             String uploadSessionId = new String(Base64Utils.decodeUrlSafe(uploadSessionIdBase64.getBytes()));
             System.out.println(uploadSessionId);
@@ -91,6 +84,4 @@ public class UploadWSHandler extends BinaryWebSocketHandler {
             bos.write(byteBuffer.array());
         }
     }
-
-
 }
