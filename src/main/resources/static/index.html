@@ -25,6 +25,14 @@
     <label for="upload-via-multipart">Select a file</label>
 </form>
 
+<br>
+<h3>Vanilla - Upload XHR Chunk </h3>
+<hr>
+<form>
+    <input id="upload-via-xhr-chunk" type="file" onchange="xhrChunker.uploadFile(this.files)"/>
+    <label for="upload-via-xhr-chunk">Select a file</label>
+</form>
+
 <script src="./webjars/org.webjars.npm/es6-promise/4.2.4/dist/es6-promise.min.js"></script>
 <script src="./webjars/org.webjars.npm/es6-promise/4.2.4/dist/es6-promise.auto.min.js"></script>
 <script src="./webjars/whatwg-fetch/2.0.3/fetch.js"></script>
@@ -32,6 +40,7 @@
 <script src="./BinaryWSClient.js"></script>
 <script src="./FetchUpload.js"></script>
 <script src="./MultipartUpload.js"></script>
+<script src="./XHRChunkingUpload.js"></script>
 
 </body>
 </html>

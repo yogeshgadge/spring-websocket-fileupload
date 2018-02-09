@@ -8,3 +8,7 @@ function guid() {
     return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
         s4() + '-' + s4() + s4() + s4();
 }
+
+function getUniqueSessionId(additionalValue) {
+    return btoa(guid()+'\\'+additionalValue);
+}

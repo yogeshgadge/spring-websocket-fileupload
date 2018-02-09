@@ -2,7 +2,7 @@
 function uploadFileBinaryWS(files){
     var file = files[0];
     console.log('WSClient Sending '+file.name);
-    var uploadSessionId = btoa(guid()+'\\'+file.name);
+    var uploadSessionId = getUniqueSessionId(file.name);
     var ws = new WebSocket('ws://'+window.location.host+'/binary?uploadSessionId='+uploadSessionId);
     ws.onmessage = function(response){
         console.log('WSClient',response);

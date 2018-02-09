@@ -10,6 +10,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 @Controller
 public class UploadControllersVarious {
@@ -42,6 +44,40 @@ public class UploadControllersVarious {
         return ResponseEntity.ok().header(
                 HttpHeaders.CONTENT_DISPOSITION,
                 "attachment; filename=\"" + fileName + "\"").body("{\"success\": true}");
+    }
+
+
+    Map<String, ChunkedFileUploadInFlight> sessionToFileMap = new WeakHashMap<>();
+
+    @PostMapping(value = "/chunk-upload", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<String> handleChunkedUpload(
+            @RequestBody byte[] data,
+            @RequestHeader("X-Upload-Session-id") String uploadSessionId,
+            @RequestHeader("X-File-Name") String fileName,
+            @RequestHeader("X-File-Chunk-Sequence") Integer fileChunkSequence,
+            @RequestHeader("X-File-Last") boolean isLast
+    ) throws IOException {
+
+        ChunkedFileUploadInFlight inFlightUpload = sessionToFileMap.get(uploadSessionId);
+        if (inFlightUpload == null) {
+            inFlightUpload = new ChunkedFileUploadInFlight(fileName, uploadSessionId);
+
+        }
+        inFlightUpload.addChunk(fileChunkSequence, data);
+
+        if (isLast) {
+            SaveToFileSystem.save(fileName, "chunk-upload", inFlightUpload.getAllBytes());
+            logger.info("Chunked Upload Final "+fileName);
+            return ResponseEntity.ok().header(
+                    HttpHeaders.CONTENT_DISPOSITION,
+                    "attachment; filename=\"" + fileName + "\"").body("{\"success\": true}");
+        } else {
+            return ResponseEntity.ok().header(
+                    HttpHeaders.CONTENT_DISPOSITION,
+                    "attachment; filename=\"" + fileName + "\"").body("{\"chunk-success\": true}");
+        }
+
     }
 
     @GetMapping("/ping")
